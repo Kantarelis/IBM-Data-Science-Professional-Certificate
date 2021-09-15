@@ -38,7 +38,7 @@ app.layout = html.Div(children=[html.H1('SpaceX Launch Records Dashboard',
                                 html.P("Payload range (Kg):"),
                                 # TASK 3: Add a slider to select payload range
                                 dcc.RangeSlider(id='payload-slider', min = 0, max = 10000, step = 1000, value = [min_payload, max_payload], 
-                                                marks={ 2500: {'label': '2500 (Kg)'}, 5000: {'label': '5000 (Kg)'}, 7500: {'label': '7500 (Kg)'}}),
+                                                marks={ 2500: {'label': '2500 (Kg)'}, 5000: {'label': '5000 (Kg)'}, 7500: {'label': '7500 (Kg)'}, 10000: {'label': '10000 (Kg)'}}),
 
                                 # TASK 4: Add a scatter chart to show the correlation between payload and launch success
                                 html.Div(dcc.Graph(id='success-payload-scatter-chart')),
@@ -55,9 +55,10 @@ def select(inputt):
         new_df = spacex_df.groupby(['Launch Site'])["class"].sum().to_frame()
         new_df = new_df.reset_index()
         fig = px.pie(new_df, values='class', names='Launch Site', title='Total Success Launches by Site')
+        fig.update_traces(textfont_size=20)
     else:
         new_df = spacex_df[spacex_df["Launch Site"] == inputt]["class"].value_counts().to_frame()
-        new_df["name"] = ["Failure", "Success"]
+        new_df["name"] = ["Success", "Failure"]
         fig = px.pie(new_df, values='class', names='name', title='Total Success Launches for ' + inputt)
     return fig
     
@@ -81,6 +82,7 @@ def scatter(input1, input2):
         new_df3 = new_df2[new_df["Payload Mass (kg)"] <= input2[1]]
         fig2 = px.scatter(new_df3, y="class", x="Payload Mass (kg)", color="Booster Version Category")
     return fig2
+    
 
 # Run the app
 if __name__ == '__main__':
